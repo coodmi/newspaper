@@ -1,0 +1,90 @@
+[10-Feb-2026 20:25:03 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 8.1.33. in /home/demosashik/public_html/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home/demosashik/public_html/vendor/composer/autoload_real.php(25): require()
+#1 /home/demosashik/public_html/vendor/autoload.php(22): ComposerAutoloaderInit78e1d873a2a0c4a0ec568539775ee0fa::getLoader()
+#2 /home/demosashik/public_html/public/index.php(14): require('/home/demosashi...')
+#3 {main}
+  thrown in /home/demosashik/public_html/vendor/composer/platform_check.php on line 22
+[10-Feb-2026 20:26:27 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 8.1.33. in /home/demosashik/public_html/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home/demosashik/public_html/vendor/composer/autoload_real.php(25): require()
+#1 /home/demosashik/public_html/vendor/autoload.php(22): ComposerAutoloaderInit78e1d873a2a0c4a0ec568539775ee0fa::getLoader()
+#2 /home/demosashik/public_html/public/index.php(14): require('/home/demosashi...')
+#3 {main}
+  thrown in /home/demosashik/public_html/vendor/composer/platform_check.php on line 22
+[10-Feb-2026 20:26:29 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 8.1.33. in /home/demosashik/public_html/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home/demosashik/public_html/vendor/composer/autoload_real.php(25): require()
+#1 /home/demosashik/public_html/vendor/autoload.php(22): ComposerAutoloaderInit78e1d873a2a0c4a0ec568539775ee0fa::getLoader()
+#2 /home/demosashik/public_html/public/index.php(14): require('/home/demosashi...')
+#3 {main}
+  thrown in /home/demosashik/public_html/vendor/composer/platform_check.php on line 22
+[10-Feb-2026 20:26:31 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 8.1.33. in /home/demosashik/public_html/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home/demosashik/public_html/vendor/composer/autoload_real.php(25): require()
+#1 /home/demosashik/public_html/vendor/autoload.php(22): ComposerAutoloaderInit78e1d873a2a0c4a0ec568539775ee0fa::getLoader()
+#2 /home/demosashik/public_html/public/index.php(14): require('/home/demosashi...')
+#3 {main}
+  thrown in /home/demosashik/public_html/vendor/composer/platform_check.php on line 22
+[10-Feb-2026 20:26:32 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 8.1.33. in /home/demosashik/public_html/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home/demosashik/public_html/vendor/composer/autoload_real.php(25): require()
+#1 /home/demosashik/public_html/vendor/autoload.php(22): ComposerAutoloaderInit78e1d873a2a0c4a0ec568539775ee0fa::getLoader()
+#2 /home/demosashik/public_html/public/index.php(14): require('/home/demosashi...')
+#3 {main}
+  thrown in /home/demosashik/public_html/vendor/composer/platform_check.php on line 22
+[10-Feb-2026 20:26:40 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 8.1.33. in /home/demosashik/public_html/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home/demosashik/public_html/vendor/composer/autoload_real.php(25): require()
+#1 /home/demosashik/public_html/vendor/autoload.php(22): ComposerAutoloaderInit78e1d873a2a0c4a0ec568539775ee0fa::getLoader()
+#2 /home/demosashik/public_html/public/index.php(14): require('/home/demosashi...')
+#3 {main}
+  thrown in /home/demosashik/public_html/vendor/composer/platform_check.php on line 22
+[10-Feb-2026 20:26:51 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 8.1.33. in /home/demosashik/public_html/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home/demosashik/public_html/vendor/composer/autoload_real.php(25): require()
+#1 /home/demosashik/public_html/vendor/autoload.php(22): ComposerAutoloaderInit78e1d873a2a0c4a0ec568539775ee0fa::getLoader()
+#2 /home/demosashik/public_html/public/index.php(14): require('/home/demosashi...')
+#3 {main}
+  thrown in /home/demosashik/public_html/vendor/composer/platform_check.php on line 22
+[10-Feb-2026 20:29:57 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 8.1.33. in /home/demosashik/public_html/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home/demosashik/public_html/vendor/composer/autoload_real.php(25): require()
+#1 /home/demosashik/public_html/vendor/autoload.php(22): ComposerAutoloaderInit78e1d873a2a0c4a0ec568539775ee0fa::getLoader()
+#2 /home/demosashik/public_html/public/index.php(14): require('/home/demosashi...')
+#3 {main}
+  thrown in /home/demosashik/public_html/vendor/composer/platform_check.php on line 22
+[10-Feb-2026 20:30:21 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 8.1.33. in /home/demosashik/public_html/vendor/composer/platform_check.php:22
+Stack trace:
+#0 /home/demosashik/public_html/vendor/composer/autoload_real.php(25): require()
+#1 /home/demosashik/public_html/vendor/autoload.php(22): ComposerAutoloaderInit78e1d873a2a0c4a0ec568539775ee0fa::getLoader()
+#2 /home/demosashik/public_html/public/index.php(14): require('/home/demosashi...')
+#3 {main}
+  thrown in /home/demosashik/public_html/vendor/composer/platform_check.php on line 22
+[11-Feb-2026 02:33:55 Asia/Dhaka] PHP Fatal error:  Declaration of Monolog\Logger::emergency(Stringable|string $message, array $context = []): void must be compatible with PsrExt\Log\LoggerInterface::emergency($message, array $context = []) in /home/demosashik/public_html/vendor/monolog/monolog/src/Monolog/Logger.php on line 683
+[11-Feb-2026 02:34:04 Asia/Dhaka] PHP Fatal error:  Declaration of Monolog\Logger::emergency(Stringable|string $message, array $context = []): void must be compatible with PsrExt\Log\LoggerInterface::emergency($message, array $context = []) in /home/demosashik/public_html/vendor/monolog/monolog/src/Monolog/Logger.php on line 683
+[11-Feb-2026 02:34:20 Asia/Dhaka] PHP Fatal error:  Declaration of Monolog\Logger::emergency(Stringable|string $message, array $context = []): void must be compatible with PsrExt\Log\LoggerInterface::emergency($message, array $context = []) in /home/demosashik/public_html/vendor/monolog/monolog/src/Monolog/Logger.php on line 683
+[16-Feb-2026 15:29:29 Asia/Dhaka] PHP Fatal error:  Uncaught ErrorException: Cannot modify header information - headers already sent by (output started at /home/demosashik/public_html/routes/web.php:45) in /home/demosashik/public_html/vendor/symfony/http-foundation/Response.php:322
+Stack trace:
+#0 /home/demosashik/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(256): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError()
+#1 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->Illuminate\Foundation\Bootstrap\{closure}()
+#2 /home/demosashik/public_html/vendor/symfony/http-foundation/Response.php(322): header()
+#3 /home/demosashik/public_html/vendor/symfony/http-foundation/Response.php(401): Symfony\Component\HttpFoundation\Response->sendHeaders()
+#4 /home/demosashik/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(219): Symfony\Component\HttpFoundation\Response->send()
+#5 /home/demosashik/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(196): Illuminate\Foundation\Bootstrap\HandleExceptions->renderHttpResponse()
+#6 /home/demosashik/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(256): Illuminate\Foundation\Bootstrap\HandleExceptions->handleException()
+#7 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->Illuminate\Foundation\Bootstrap\{closure}()
+#8 {main}
+  thrown in /home/demosashik/public_html/vendor/symfony/http-foundation/Response.php on line 322
+[16-Feb-2026 15:29:32 Asia/Dhaka] PHP Fatal error:  Uncaught ErrorException: Cannot modify header information - headers already sent by (output started at /home/demosashik/public_html/routes/web.php:45) in /home/demosashik/public_html/vendor/symfony/http-foundation/Response.php:322
+Stack trace:
+#0 /home/demosashik/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(256): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError()
+#1 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->Illuminate\Foundation\Bootstrap\{closure}()
+#2 /home/demosashik/public_html/vendor/symfony/http-foundation/Response.php(322): header()
+#3 /home/demosashik/public_html/vendor/symfony/http-foundation/Response.php(401): Symfony\Component\HttpFoundation\Response->sendHeaders()
+#4 /home/demosashik/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(219): Symfony\Component\HttpFoundation\Response->send()
+#5 /home/demosashik/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(196): Illuminate\Foundation\Bootstrap\HandleExceptions->renderHttpResponse()
+#6 /home/demosashik/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(256): Illuminate\Foundation\Bootstrap\HandleExceptions->handleException()
+#7 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->Illuminate\Foundation\Bootstrap\{closure}()
+#8 {main}
+  thrown in /home/demosashik/public_html/vendor/symfony/http-foundation/Response.php on line 322

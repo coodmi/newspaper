@@ -1,0 +1,278 @@
+<?php
+
+// ============== FORM SUBMISSION LOGIC ==============
+// This block runs ONLY when the form is submitted via POST method.
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // --- Step 1: Get data from the form ---
+    $appName = $_POST['appName'] ?? 'Laravel';
+    $appUrl = $_POST['appUrl'] ?? 'http://localhost';
+    $dbName = $_POST['dbName'] ?? 'laravel';
+    $runMigration = isset($_POST['run_migration']); // Check if the checkbox was ticked
+    $errorMessage = '';
+
+    // --- File Paths ---
+    $rootDir = dirname(__DIR__);
+    $envTemplatePath = $rootDir . '/.env.ashik';
+    $envFinalPath = $rootDir . '/.env';
+    $indexSetupPath = __DIR__ . '/index.php';
+    $indexLocalPath = __DIR__ . '/index.php.local';
+    $indexProductionPath = __DIR__ . '/index.php.production';
+
+    try {
+        // --- Step 2: Check if required files exist ---
+        if (!file_exists($envTemplatePath)) {
+            throw new Exception("Error: '.env.ashik' file not found in the project root.");
+        }
+        if (!file_exists($indexProductionPath)) {
+            throw new Exception("Error: 'index.php.production' file not found in the public directory.");
+        }
+
+        // --- Step 3: Create and populate the .env file ---
+        $envContent = file_get_contents($envTemplatePath);
+        if ($envContent === false) {
+            throw new Exception("Error: Could not read the template '.env.ashik' file.");
+        }
+        
+        $envContent = preg_replace('/^APP_NAME=.*/m', 'APP_NAME="' . $appName . '"', $envContent);
+        $envContent = preg_replace('/^APP_URL=.*/m', 'APP_URL=' . $appUrl, $envContent);
+        $envContent = preg_replace('/^DB_DATABASE=.*/m', 'DB_DATABASE=' . $dbName, $envContent);
+
+        if (file_put_contents($envFinalPath, $envContent) === false) {
+            throw new Exception("Error: Could not write to '.env' file. Check file permissions.");
+        }
+
+        // --- Step 4: Run Artisan Commands (if requested) ---
+        if ($runMigration) {
+            // Key Generate
+            $keyGenerateCommand = 'php ' . escapeshellarg($rootDir . '/artisan') . ' key:generate --force 2>&1';
+            exec($keyGenerateCommand, $keyOutput, $keyReturnVar);
+            if ($keyReturnVar !== 0) {
+                 throw new Exception("Failed to generate application key. Output: <br><pre>" . htmlspecialchars(implode("\n", $keyOutput)) . "</pre>");
+            }
+
+            // Migrate & Seed
+            $migrateCommand = 'php ' . escapeshellarg($rootDir . '/artisan') . ' migrate --seed --force 2>&1';
+            exec($migrateCommand, $migrateOutput, $migrateReturnVar);
+            if ($migrateReturnVar !== 0) {
+                throw new Exception("Database migration/seeding failed. Please check your .env database credentials and ensure the database exists. <br><br><strong>Artisan Output:</strong><br><pre>" . htmlspecialchars(implode("\n", $migrateOutput)) . "</pre>");
+            }
+
+            // Storage Link
+            $storageLinkCommand = 'php ' . escapeshellarg($rootDir . '/artisan') . ' storage:link 2>&1';
+            exec($storageLinkCommand, $storageOutput, $storageReturnVar);
+             if ($storageReturnVar !== 0) {
+                // This is often not a critical failure, but we'll report it.
+                // The most common issue is the link already existing.
+                // We will proceed but show the error message on the next screen if possible,
+                // or just log it. For simplicity, we'll throw an exception for now.
+                 throw new Exception("Migration was successful, but failed to create storage link. You may need to run 'php artisan storage:link' manually. <br><br><strong>Artisan Output:</strong><br><pre>" . htmlspecialchars(implode("\n", $storageOutput)) . "</pre>");
+            }
+        }
+
+        // --- Step 5: Rename index files ---
+        if (!rename($indexSetupPath, $indexLocalPath)) {
+            throw new Exception("Error: Could not rename 'index.php' to 'index.php.local'.");
+        }
+
+        if (!rename($indexProductionPath, $indexSetupPath)) {
+            rename($indexLocalPath, $indexSetupPath);
+            throw new Exception("Error: Could not rename 'index.php.production' to 'index.php'.");
+        }
+
+        // --- Step 6: Redirect to the app URL ---
+        header('Location: ' . $appUrl);
+        exit;
+
+    } catch (Exception $e) {
+        $errorMessage = $e->getMessage();
+    }
+}
+// ============== END OF FORM SUBMISSION LOGIC ==============
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laravel Application Setup Wizard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .form-step {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .form-step.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        pre { background-color: #f3f4f6; padding: 1rem; border-radius: 0.5rem; white-space: pre-wrap; word-wrap: break-word; font-size: 0.875rem; }
+    </style>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden">
+        <div class="p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Application Setup Wizard</h1>
+                <p class="text-gray-500 mt-2">আপনার লারাভেল অ্যাপ্লিকেশনটি সেটআপ করুন।</p>
+            </div>
+
+            <?php if (!empty($errorMessage)): ?>
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-800 p-4 rounded-md mb-6" role="alert">
+                    <p class="font-bold">একটি সমস্যা হয়েছে!</p>
+                    <p class="mt-2"><?php echo $errorMessage; ?></p>
+                </div>
+            <?php endif; ?>
+
+            <!-- Progress Bar -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between">
+                    <div class="w-full h-2 bg-gray-200 rounded-full">
+                        <div id="progressBar" class="h-2 bg-indigo-600 rounded-full transition-all duration-500" style="width: 33%;"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-2 text-sm text-gray-500">
+                    <div id="step-1-text" class="font-semibold text-indigo-600">Application</div>
+                    <div id="step-2-text">Database</div>
+                    <div id="step-3-text">Finish</div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="setupForm" action="index.php" method="POST">
+                <!-- Step 1: App Info -->
+                <div id="step-1" class="form-step active space-y-6">
+                    <h2 class="text-xl font-semibold text-gray-700">Application Details</h2>
+                    <div>
+                        <label for="appName" class="block text-sm font-medium text-gray-700 mb-1">অ্যাপের নাম (APP_NAME)</label>
+                        <input type="text" id="appName" name="appName" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition" placeholder="My Awesome App" required>
+                    </div>
+                    <div>
+                        <label for="appUrl" class="block text-sm font-medium text-gray-700 mb-1">অ্যাপের URL (APP_URL)</label>
+                        <input type="url" id="appUrl" name="appUrl" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition" placeholder="http://localhost:8000" required>
+                    </div>
+                </div>
+
+                <!-- Step 2: DB Info -->
+                <div id="step-2" class="form-step space-y-6">
+                    <h2 class="text-xl font-semibold text-gray-700">Database &amp; Commands</h2>
+                    <div>
+                        <label for="dbName" class="block text-sm font-medium text-gray-700 mb-1">ডাটাবেসের নাম (DB_DATABASE)</label>
+                        <input type="text" id="dbName" name="dbName" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 transition" placeholder="my_laravel_db" required>
+                    </div>
+                    <div class="flex items-center pt-2">
+                        <input id="run_migration" name="run_migration" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" checked>
+                        <label for="run_migration" class="ml-3 block text-sm font-medium text-gray-700">
+                            Key Generate, Migrate, Seed & Storage Link চালান
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Confirmation -->
+                 <div id="step-3" class="form-step text-center">
+                    <h2 class="text-2xl font-semibold text-gray-800">প্রস্তুত!</h2>
+                    <p class="text-gray-600 mt-2">আপনি সেটআপ সম্পন্ন করতে প্রস্তুত। নিচের বাটনে ক্লিক করুন।</p>
+                    <svg class="w-24 h-24 text-green-500 mx-auto my-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+
+
+                <!-- Navigation Buttons -->
+                <div class="mt-8 pt-5 border-t border-gray-200 flex justify-between items-center">
+                    <button type="button" id="prevBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition hidden">
+                        Previous
+                    </button>
+                    <button type="button" id="nextBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition ml-auto">
+                        Next
+                    </button>
+                    <button type="submit" id="submitBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition hidden ml-auto">
+                        সেটআপ সম্পন্ন করুন
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const form = document.getElementById('setupForm');
+            const steps = Array.from(document.querySelectorAll('.form-step'));
+            const progressBar = document.getElementById('progressBar');
+            const stepTexts = [
+                document.getElementById('step-1-text'),
+                document.getElementById('step-2-text'),
+                document.getElementById('step-3-text')
+            ];
+            
+            let currentStep = 0;
+
+            function updateButtons() {
+                prevBtn.classList.toggle('hidden', currentStep === 0);
+                nextBtn.classList.toggle('hidden', currentStep === steps.length - 1);
+                submitBtn.classList.toggle('hidden', currentStep !== steps.length - 1);
+            }
+
+            function updateProgress() {
+                const progress = ((currentStep + 1) / steps.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                
+                stepTexts.forEach((text, index) => {
+                    text.classList.remove('font-semibold', 'text-indigo-600');
+                    text.classList.add('text-gray-500');
+                    if (index === currentStep) {
+                        text.classList.add('font-semibold', 'text-indigo-600');
+                    }
+                });
+            }
+
+            function showStep(stepIndex) {
+                steps.forEach((step, index) => {
+                    step.classList.toggle('active', index === stepIndex);
+                });
+                updateButtons();
+                updateProgress();
+            }
+
+            function validateStep(stepIndex) {
+                const currentStepElement = steps[stepIndex];
+                const inputs = currentStepElement.querySelectorAll('input[required]');
+                for (const input of inputs) {
+                    if (!input.value.trim()) {
+                        input.focus();
+                        input.classList.add('border-red-500', 'ring-red-500');
+                        alert(`Please fill out the '${input.labels[0].textContent}' field.`);
+                        return false;
+                    }
+                     input.classList.remove('border-red-500', 'ring-red-500');
+                }
+                return true;
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (validateStep(currentStep) && currentStep < steps.length - 1) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+
+            // Initial setup
+            showStep(currentStep);
+        });
+    </script>
+</body>
+</html>

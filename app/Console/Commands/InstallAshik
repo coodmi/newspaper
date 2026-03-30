@@ -1,0 +1,190 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
+use Exception;
+
+class InstallAshik extends Command
+{
+    protected $signature = 'ashik:install';
+    protected $description = 'Install and configure the application in one step.';
+
+    public function handle(): int
+    {
+        $this->info('🚀 Starting the Installation Process...');
+
+        $this->setupEnvFile();
+        $this->handleEnvInput();
+
+        $this->setupDatabase();
+        $this->generateAppKey();
+        $this->runMigrations();
+        $this->runSeeders();
+        $this->createStorageLink();
+        $this->clearCache();
+
+        $this->info('🎉 Installation completed successfully!');
+        return Command::SUCCESS;
+    }
+
+    private function setupEnvFile(): void
+    {
+        if (!file_exists(base_path('.env'))) {
+            if (file_exists(base_path('.env.ashik'))) {
+                File::copy(base_path('.env.ashik'), base_path('.env'));
+                $this->info('✅ .env file created from .env.ashik');
+            } else {
+                $this->error('❌ No .env.ashik found. Please create it first.');
+                exit(Command::FAILURE);
+            }
+        } else {
+            $this->info('✅ .env file already exists.');
+        }
+    }
+
+    private function handleEnvInput(): void
+    {
+        // APP_NAME
+        $appName = env('APP_NAME');
+        if (empty($appName)) {
+            $appNameInput = null;
+            while (empty($appNameInput)) {
+                $appNameInput = $this->ask('Enter Application Name');
+                if (empty($appNameInput)) {
+                    $this->error('❌ APP_NAME cannot be empty. Please try again.');
+                }
+            }
+            $this->updateEnvValue('APP_NAME', $appNameInput);
+            $this->info("✅ APP_NAME set to '{$appNameInput}'.");
+        // $this->callSilent('ashik:install');
+            
+                //  shell_exec('composer run ashik');
+        } else {
+            $this->info("✅ APP_NAME is already set as '{$appName}', skipping input.");
+        }
+
+        // APP_URL
+        $appUrl = env('APP_URL');
+        if (empty($appUrl)) {
+            $appUrlInput = null;
+            while (empty($appUrlInput)) {
+                $appUrlInput = $this->ask('Enter Application URL (e.g., http://localhost)');
+                if (empty($appUrlInput)) {
+                    $this->error('❌ APP_URL cannot be empty. Please try again.');
+                }
+            }
+            $this->updateEnvValue('APP_URL', $appUrlInput);
+            $this->info("✅ APP_URL set to '{$appUrlInput}'.");
+        } else {
+            $this->info("✅ APP_URL is already set as '{$appUrl}', skipping input.");
+        }
+
+        // DB_DATABASE
+        $dbName = env('DB_DATABASE');
+        if (empty($dbName)) {
+            $dbNameInput = null;
+            while (empty($dbNameInput)) {
+                $dbNameInput = $this->ask('Enter Database Name (e.g., news_db_name)');
+                if (empty($dbNameInput)) {
+                    $this->error('❌ DB_DATABASE cannot be empty. Please try again.');
+                }
+            }
+            $this->updateEnvValue('DB_DATABASE', $dbNameInput);
+            $this->info("✅ DB_DATABASE set to '{$dbNameInput}'.");
+        } else {
+            $this->info("✅ DB_DATABASE is already set as '{$dbName}', skipping input.");
+        }
+    }
+
+    private function updateEnvValue(string $key, string $value): void
+    {
+        $envPath = base_path('.env');
+        $envContent = file_get_contents($envPath);
+
+        // Remove any existing quotes around the value before saving
+        $value = trim($value, "\"'");
+
+        // Escape key for regex
+        $escapedKey = preg_quote($key, '/');
+
+        if (preg_match("/^{$escapedKey}=.*/m", $envContent)) {
+            // Replace the existing line without quotes
+            $envContent = preg_replace("/^{$escapedKey}=.*/m", "{$key}={$value}", $envContent);
+        } else {
+            // Append if key not found
+            $envContent .= PHP_EOL . "{$key}={$value}";
+        }
+
+        file_put_contents($envPath, $envContent);
+    }
+
+    private function setupDatabase(): void
+    {
+        try {
+            $connection = config('database.default');
+            $dbConfig = config("database.connections.{$connection}");
+
+            if ($connection === 'mysql') {
+                $dbName = $dbConfig['database'];
+
+                if (!$dbName) {
+                    $this->warn('⚠️ DB_DATABASE is not set in your .env file. Skipping database creation.');
+                    return;
+                }
+
+                config(["database.connections.{$connection}.database" => null]);
+                DB::statement("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+                $this->info("✅ MySQL database '{$dbName}' created or already exists.");
+
+                config(["database.connections.{$connection}.database" => $dbName]);
+                DB::reconnect($connection);
+            }
+        } catch (Exception $e) {
+            $this->error("❌ Database connection failed: {$e->getMessage()}");
+            $this->warn('Please ensure your database credentials in the .env file are correct and the database server is running.');
+        }
+    }
+
+    private function generateAppKey(): void
+    {
+        if (config('app.key')) {
+            $this->info('✅ Application key already exists. Skipping generation.');
+            return;
+        }
+        $this->callSilent('key:generate', ['--force' => true]);
+        $this->info('✅ Application key generated.');
+    }
+
+    private function runMigrations(): void
+    {
+        if ($this->confirm('👉 Do you want to run database migrations?', true)) {
+            $this->call('migrate', ['--force' => true]);
+        }
+    }
+
+    private function runSeeders(): void
+    {
+        if ($this->confirm('👉 Do you want to run database seeders?', true)) {
+            $this->call('db:seed', ['--force' => true]);
+        }
+    }
+
+    private function createStorageLink(): void
+    {
+        if (file_exists(public_path('storage'))) {
+            $this->info('✅ Storage link already exists.');
+            return;
+        }
+        $this->callSilent('storage:link');
+        $this->info('✅ Storage link created.');
+    }
+
+    private function clearCache(): void
+    {
+        $this->callSilent('optimize:clear');
+        $this->info('✅ Application cache cleared.');
+    }
+}
