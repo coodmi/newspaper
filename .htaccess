@@ -1,10 +1,5 @@
 RewriteEngine On
 
-# Directly serve existing files and directories from root
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
-
 # Route storage requests to public/storage
 RewriteRule ^storage/(.*)$ public/storage/$1 [L]
 
