@@ -24,8 +24,8 @@ class Logos extends Component
         $this->website = Website::first();
 
         if ($this->website) {
-            $this->temp_favicon = $this->website->favicon ? Storage::url($this->website->favicon) : null;
-            $this->temp_logo = $this->website->logo ? Storage::url($this->website->logo) : null;
+            $this->temp_favicon = $this->website->favicon ? asset('storage/' . $this->website->favicon) : null;
+            $this->temp_logo = $this->website->logo ? asset('storage/' . $this->website->logo) : null;
         }
         // dd($this->website);
     }

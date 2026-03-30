@@ -1,12 +1,15 @@
 RewriteEngine On
 
-# Serve storage files directly from public/storage
-RewriteCond %{REQUEST_URI} ^/storage/(.*)$
+# Directly serve existing files and directories from root
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Route storage requests to public/storage
 RewriteRule ^storage/(.*)$ public/storage/$1 [L]
 
-# Serve public build assets directly
-RewriteCond %{REQUEST_URI} ^/build/(.*)$
+# Route build assets to public/build
 RewriteRule ^build/(.*)$ public/build/$1 [L]
 
-# Route everything else through Laravel's public/index.php
+# Route everything else through Laravel front controller
 RewriteRule ^(.*)$ public/$1 [L]
